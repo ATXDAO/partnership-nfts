@@ -34,9 +34,10 @@ contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
     }
 
     function returnToDao(
-        uint256 tokenId
+        uint256 tokenId,
+        address receiver
     ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        transferFrom(ownerOf(tokenId), msg.sender, tokenId);
+        transferFrom(ownerOf(tokenId), receiver, tokenId);
     }
 
     function _checkAuthorized(
@@ -45,13 +46,7 @@ contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
         uint256 tokenId
     ) internal view override {
         if (!hasRole(DEFAULT_ADMIN_ROLE, spender)) {
-            if (!_isAuthorized(owner, spender, tokenId)) {
-                if (owner == address(0)) {
-                    revert ERC721NonexistentToken(tokenId);
-                } else {
-                    revert ERC721InsufficientApproval(spender, tokenId);
-                }
-            }
+            super._checkAuthorized(owner, spender, tokenId);
         }
     }
 

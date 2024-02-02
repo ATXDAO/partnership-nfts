@@ -10,6 +10,7 @@ contract YourContractTest is Test {
     address user = makeAddr("User");
     address user2 = makeAddr("User2");
     address admin = makeAddr("Admin");
+    address multisig = makeAddr("Multisig");
 
     function setUp() public {
         console.log("User: ", user);
@@ -72,9 +73,28 @@ contract YourContractTest is Test {
         vm.startPrank(admin);
         nftCollection.mint(user);
 
-        nftCollection.returnToDao(0);
+        nftCollection.returnToDao(0, multisig);
         vm.stopPrank();
 
-        console.log("owner of 0: ", nftCollection.ownerOf(0));
+        assertEq(nftCollection.ownerOf(0), multisig);
+    }
+
+    function testRevert__ReturnToDao__IfNotAdmin() public {
+        vm.startPrank(admin);
+        nftCollection.mint(user);
+        vm.stopPrank();
+
+        vm.prank(user);
+        vm.expectRevert();
+        nftCollection.returnToDao(0, multisig);
+    }
+
+    function testTransfer() public {
+        vm.startPrank(admin);
+        nftCollection.mint(user);
+        vm.stopPrank();
+
+        vm.prank(user);
+        nftCollection.transferFrom(user, user2, 0);
     }
 }
