@@ -39,6 +39,22 @@ contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
         transferFrom(ownerOf(tokenId), msg.sender, tokenId);
     }
 
+    function _checkAuthorized(
+        address owner,
+        address spender,
+        uint256 tokenId
+    ) internal view override {
+        if (!hasRole(DEFAULT_ADMIN_ROLE, spender)) {
+            if (!_isAuthorized(owner, spender, tokenId)) {
+                if (owner == address(0)) {
+                    revert ERC721NonexistentToken(tokenId);
+                } else {
+                    revert ERC721InsufficientApproval(spender, tokenId);
+                }
+            }
+        }
+    }
+
     function supportsInterface(
         bytes4 interfaceId
     ) public view override(ERC721URIStorage, AccessControl) returns (bool) {
