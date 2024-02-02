@@ -1,11 +1,13 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../contracts/YourContract.sol";
+import "../contracts/ATXDAOPartnershipNft.sol";
 import "./DeployHelpers.s.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
+
+    address admin = makeAddr("Admin");
 
     function run() external {
         uint256 deployerPrivateKey = setupLocalhostEnv();
@@ -15,9 +17,12 @@ contract DeployScript is ScaffoldETHDeploy {
             );
         }
         vm.startBroadcast(deployerPrivateKey);
-        YourContract yourContract = new YourContract(
-            vm.addr(deployerPrivateKey)
-        );
+
+        address[] memory admins = new address[](1);
+        admins[0] = admin;
+
+        ATXDAOPartnershipNft yourContract = new ATXDAOPartnershipNft(admins);
+
         console.logString(
             string.concat(
                 "YourContract deployed at: ",
