@@ -8,36 +8,21 @@ import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
 contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
-    constructor(address[] memory admins) ERC721("ADNDN", "ATX") {
+    error ATXDAOPartnershipNft__NotValidOperator();
+
+    string mintUri;
+    uint256 mintCount;
+    uint256 tier;
+
+    constructor(
+        address[] memory admins,
+        string memory newMintUri
+    ) ERC721("ATX DAO Partnership NFT", "ATXP") {
         for (uint256 i = 0; i < admins.length; i++) {
             _grantRole(DEFAULT_ADMIN_ROLE, admins[i]);
         }
-    }
 
-    uint256 mintCount;
-
-    function mint(address target) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        _mint(target, mintCount);
-        mintCount++;
-    }
-
-    error ATXDAOPartnershipNft__NotValidOperator();
-
-    function setTokenURI(uint256 tokenId, string memory tokenUri) external {
-        if (msg.sender != ownerOf(tokenId)) {
-            if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender)) {
-                revert ATXDAOPartnershipNft__NotValidOperator();
-            }
-        }
-
-        _setTokenURI(tokenId, tokenUri);
-    }
-
-    function returnToDao(
-        uint256 tokenId,
-        address receiver
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
-        transferFrom(ownerOf(tokenId), receiver, tokenId);
+        mintUri = newMintUri;
     }
 
     function _checkAuthorized(
@@ -54,5 +39,46 @@ contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
         bytes4 interfaceId
     ) public view override(ERC721URIStorage, AccessControl) returns (bool) {
         return super.supportsInterface(interfaceId);
+    }
+
+    function mint(
+        address target,
+        uint256 newTier
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        _mint(target, mintCount);
+        _setTokenURI(mintCount, mintUri);
+        mintCount++;
+        tier = newTier;
+    }
+
+    function setTokenURI(uint256 tokenId, string memory tokenUri) external {
+        if (msg.sender != ownerOf(tokenId)) {
+            if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender)) {
+                revert ATXDAOPartnershipNft__NotValidOperator();
+            }
+        }
+
+        _setTokenURI(tokenId, tokenUri);
+    }
+
+    function revokeNft(
+        uint256 tokenId,
+        address receiver
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        transferFrom(ownerOf(tokenId), receiver, tokenId);
+    }
+
+    function setMintUri(
+        string memory newMintUri
+    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+        mintUri = newMintUri;
+    }
+
+    function getMintUri() external view returns (string memory) {
+        return mintUri;
+    }
+
+    function getMintCount() external view returns (uint256) {
+        return mintCount;
     }
 }

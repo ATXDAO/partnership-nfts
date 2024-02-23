@@ -1,57 +1,69 @@
+"use client";
+
 import Link from "next/link";
 import type { NextPage } from "next";
 import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { NftCard } from "~~/components/nft-card/nftCard";
+import { useScaffoldContract, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
+import { useAccount } from "wagmi";
+import { FormEvent } from 'react'
+import { useFetches, useGetAllMetadatas } from "~~/components/nft-card/Hooks";
 
 const Home: NextPage = () => {
+  const account = useAccount();
+
+  const { data: partnershipNftContract } = useScaffoldContract({contractName: "ATXDAOPartnershipNft"});
+
+  const { data: mintCount } = useScaffoldContractRead({contractName:"ATXDAOPartnershipNft", functionName:"getMintCount"});
+
+  const { data: adminRole } = useScaffoldContractRead({contractName:"ATXDAOPartnershipNft", functionName: "DEFAULT_ADMIN_ROLE"});
+
+  const { data: hasAdminRole } = useScaffoldContractRead({contractName:"ATXDAOPartnershipNft", functionName: "hasRole", args: [adminRole, account.address]});
+
+  const { writeAsync: mint } = useScaffoldContractWrite({contractName: "ATXDAOPartnershipNft", functionName: "mint", args: ["", BigInt(0)] });
+
+  
+  const { data: tokenURIs } = useGetAllMetadatas(partnershipNftContract, mintCount || BigInt(0));
+
+  for (let i = 0; i < tokenURIs.length; i++) {
+    tokenURIs[i] = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
+  }
+
+  const { data: metadatas } = useFetches(tokenURIs);
+
+
+  const nfts = metadatas!.map((metadata, index) => (
+    <NftCard key={index} nft={metadata}/>
+  ));
+
+
+  async function onFormSubmit(event: any) {
+    event.preventDefault()
+    await mint({args: [event.target[0].value, BigInt(0) ]});
+  }
+
+  let adminOutput;
+  if (hasAdminRole) {
+    adminOutput = <div className="flex items-center justify-center">
+      <form onSubmit={onFormSubmit}>
+        <div className="flex flex-col items-center justify-center space-y-1">
+          <label htmlFor="recipient" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Recipient</label>
+          <input type="text" id="recipient" className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+          <button type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Mint NFT</button>
+        </div>
+      </form></div>
+  }
+
   return (
     <>
       <div className="flex items-center flex-col flex-grow pt-10">
-        <div className="px-5">
-          <h1 className="text-center mb-8">
-            <span className="block text-2xl mb-2">Welcome to</span>
-            <span className="block text-4xl font-bold">Scaffold-ETH 2</span>
-          </h1>
-          <p className="text-center text-lg">
-            Get started by editing{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/nextjs/app/page.tsx
-            </code>
-          </p>
-          <p className="text-center text-lg">
-            Edit your smart contract{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              YourContract.sol
-            </code>{" "}
-            in{" "}
-            <code className="italic bg-base-300 text-base font-bold max-w-full break-words break-all inline-block">
-              packages/hardhat/contracts
-            </code>
-          </p>
-        </div>
-
-        <div className="flex-grow bg-base-300 w-full mt-16 px-8 py-12">
-          <div className="flex justify-center items-center gap-12 flex-col sm:flex-row">
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <BugAntIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Tinker with your smart contract using the{" "}
-                <Link href="/debug" passHref className="link">
-                  Debug Contract
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-            <div className="flex flex-col bg-base-100 px-10 py-10 text-center items-center max-w-xs rounded-3xl">
-              <MagnifyingGlassIcon className="h-8 w-8 fill-secondary" />
-              <p>
-                Explore your local transactions with the{" "}
-                <Link href="/blockexplorer" passHref className="link">
-                  Block Explorer
-                </Link>{" "}
-                tab.
-              </p>
-            </div>
-          </div>
+        {
+          adminOutput
+        }
+        <div className="grid grid-cols-2 space-x-1 space-y-1">
+        {
+          nfts
+        }
         </div>
       </div>
     </>

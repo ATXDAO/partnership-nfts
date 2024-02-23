@@ -20,12 +20,15 @@ contract YourContractTest is Test {
         address[] memory admins = new address[](1);
         admins[0] = admin;
 
-        nftCollection = new ATXDAOPartnershipNft(admins);
+        nftCollection = new ATXDAOPartnershipNft(
+            admins,
+            "ipfs://bafkreide5gtpol2fzt75qt5rpds5vdmv24qnf43frionfhesfqqb2en66a"
+        );
     }
 
     function testSetTokenUriAsOwner() public {
         vm.prank(admin);
-        nftCollection.mint(user);
+        nftCollection.mint(user, 0);
 
         vm.prank(user);
         nftCollection.setTokenURI(
@@ -41,7 +44,7 @@ contract YourContractTest is Test {
 
     function testSetTokenUriAsAdmin() public {
         vm.prank(admin);
-        nftCollection.mint(user);
+        nftCollection.mint(user, 0);
 
         vm.startPrank(admin);
         nftCollection.setTokenURI(
@@ -58,7 +61,7 @@ contract YourContractTest is Test {
 
     function testRevertIfNotOwner() public {
         vm.prank(admin);
-        nftCollection.mint(user);
+        nftCollection.mint(user, 0);
 
         vm.startPrank(user2);
         vm.expectRevert();
@@ -71,9 +74,9 @@ contract YourContractTest is Test {
 
     function testReturnToDao() public {
         vm.startPrank(admin);
-        nftCollection.mint(user);
+        nftCollection.mint(user, 0);
 
-        nftCollection.returnToDao(0, multisig);
+        nftCollection.revokeNft(0, multisig);
         vm.stopPrank();
 
         assertEq(nftCollection.ownerOf(0), multisig);
@@ -81,17 +84,17 @@ contract YourContractTest is Test {
 
     function testRevert__ReturnToDao__IfNotAdmin() public {
         vm.startPrank(admin);
-        nftCollection.mint(user);
+        nftCollection.mint(user, 0);
         vm.stopPrank();
 
         vm.prank(user);
         vm.expectRevert();
-        nftCollection.returnToDao(0, multisig);
+        nftCollection.revokeNft(0, multisig);
     }
 
     function testTransfer() public {
         vm.startPrank(admin);
-        nftCollection.mint(user);
+        nftCollection.mint(user, 0);
         vm.stopPrank();
 
         vm.prank(user);

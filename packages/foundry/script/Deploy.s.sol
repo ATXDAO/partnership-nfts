@@ -7,7 +7,7 @@ import "./DeployHelpers.s.sol";
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
 
-    address admin = makeAddr("Admin");
+    address admin = 0x62286D694F89a1B12c0214bfcD567bb6c2951491;
 
     function run() external {
         uint256 deployerPrivateKey = setupLocalhostEnv();
@@ -16,12 +16,16 @@ contract DeployScript is ScaffoldETHDeploy {
                 "You don't have a deployer account. Make sure you have set DEPLOYER_PRIVATE_KEY in .env or use `yarn generate` to generate a new random account"
             );
         }
+
         vm.startBroadcast(deployerPrivateKey);
 
         address[] memory admins = new address[](1);
         admins[0] = admin;
 
-        ATXDAOPartnershipNft yourContract = new ATXDAOPartnershipNft(admins);
+        ATXDAOPartnershipNft yourContract = new ATXDAOPartnershipNft(
+            admins,
+            "ipfs://bafkreide5gtpol2fzt75qt5rpds5vdmv24qnf43frionfhesfqqb2en66a"
+        );
 
         console.logString(
             string.concat(
