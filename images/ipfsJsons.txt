@@ -1,0 +1,5 @@
+curios: ipfs://bafkreiefz6lnc2iyqovgrhskycavvkvklaxq77yxrnucj22bhf6i7bctzy
+polvos: ipfs://bafkreib3ols4uyiknwg3az4nekk4z3tkh2qhjegsglnglgia24lseg53qy
+ava: ipfs://bafkreiaxfn4bqgobyplxz5ri2au63ynzdd4ot7c4tnfd3p6ldxjt6mr7ae
+circuit: ipfs://bafkreigtz5a4r7bilr6dib5bt5db2zgmjpv3hhqrtomvqf2he64k3xgzni
+rcb: ipfs://bafkreihq53gbz4fv3pj2uyr27fiwvgoe5c5xukvdg5ouedwpfij2tzh7ru

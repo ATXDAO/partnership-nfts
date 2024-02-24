@@ -7,17 +7,18 @@ import {ERC721} from "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import {ERC721URIStorage} from "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 
-contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
+abstract contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
     error ATXDAOPartnershipNft__NotValidOperator();
 
     string mintUri;
     uint256 mintCount;
-    uint256 tier;
 
     constructor(
         address[] memory admins,
-        string memory newMintUri
-    ) ERC721("ATX DAO Partnership NFT", "ATXP") {
+        string memory newMintUri,
+        string memory name,
+        string memory symbol
+    ) ERC721(name, symbol) {
         for (uint256 i = 0; i < admins.length; i++) {
             _grantRole(DEFAULT_ADMIN_ROLE, admins[i]);
         }
@@ -41,14 +42,10 @@ contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
         return super.supportsInterface(interfaceId);
     }
 
-    function mint(
-        address target,
-        uint256 newTier
-    ) external onlyRole(DEFAULT_ADMIN_ROLE) {
+    function mint(address target) external onlyRole(DEFAULT_ADMIN_ROLE) {
         _mint(target, mintCount);
         _setTokenURI(mintCount, mintUri);
         mintCount++;
-        tier = newTier;
     }
 
     function setTokenURI(uint256 tokenId, string memory tokenUri) external {
@@ -80,5 +77,15 @@ contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
 
     function getMintCount() external view returns (uint256) {
         return mintCount;
+    }
+
+    function burn(uint256 tokenId) external {
+        if (msg.sender != ownerOf(tokenId)) {
+            if (!hasRole(DEFAULT_ADMIN_ROLE, msg.sender)) {
+                revert ATXDAOPartnershipNft__NotValidOperator();
+            }
+        }
+
+        _burn(tokenId);
     }
 }

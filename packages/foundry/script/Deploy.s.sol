@@ -1,7 +1,10 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.19;
 
-import "../contracts/ATXDAOPartnershipNft.sol";
+import "../contracts/RaineyStreetPartnershipNft.sol";
+import "../contracts/SixthStreetPartnershipNft.sol";
+
+// import "../contracts/ATXDAOPartnershipNft.sol";
 import "./DeployHelpers.s.sol";
 
 contract DeployScript is ScaffoldETHDeploy {
@@ -22,7 +25,12 @@ contract DeployScript is ScaffoldETHDeploy {
         address[] memory admins = new address[](1);
         admins[0] = admin;
 
-        ATXDAOPartnershipNft yourContract = new ATXDAOPartnershipNft(
+        RaineyStreetPartnershipNft yourContract1 = new RaineyStreetPartnershipNft(
+                admins,
+                "ipfs://bafkreide5gtpol2fzt75qt5rpds5vdmv24qnf43frionfhesfqqb2en66a"
+            );
+
+        SixthStreetPartnershipNft yourContract2 = new SixthStreetPartnershipNft(
             admins,
             "ipfs://bafkreide5gtpol2fzt75qt5rpds5vdmv24qnf43frionfhesfqqb2en66a"
         );
@@ -30,7 +38,14 @@ contract DeployScript is ScaffoldETHDeploy {
         console.logString(
             string.concat(
                 "YourContract deployed at: ",
-                vm.toString(address(yourContract))
+                vm.toString(address(yourContract1))
+            )
+        );
+
+        console.logString(
+            string.concat(
+                "YourContract deployed at: ",
+                vm.toString(address(yourContract2))
             )
         );
         vm.stopBroadcast();
