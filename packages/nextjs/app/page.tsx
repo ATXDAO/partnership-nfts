@@ -34,8 +34,7 @@ const Home: NextPage = () => {
 
   let nfts;
 
-  if (metadatas)
-    nfts = metadatas.map((metadata, index) => <NftCard key={index} nft={metadata} />);
+  if (metadatas) nfts = metadatas.map((metadata, index) => <NftCard key={index} nft={metadata} />);
 
   const { data: sixthPartnershipNftContract } = useScaffoldContract({ contractName: "SixthStreetPartnershipNft" });
   const { data: sixthMintCount } = useScaffoldContractRead({
@@ -50,10 +49,8 @@ const Home: NextPage = () => {
 
   const { data: sixthMetadatas } = useFetches(sixthTokenURIs);
 
-
   let sixthNfts;
-  if (sixthMetadatas)
-  sixthNfts = sixthMetadatas.map((metadata, index) => <NftCard key={index} nft={metadata} />);
+  if (sixthMetadatas) sixthNfts = sixthMetadatas.map((metadata, index) => <NftCard key={index} nft={metadata} />);
 
   // async function onFormSubmit(event: any) {
   //   event.preventDefault()
