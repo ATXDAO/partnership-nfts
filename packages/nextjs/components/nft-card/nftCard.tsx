@@ -20,8 +20,10 @@ export function NftCard(props: NftCardProps) {
         <p className="m-0 font-bold">Name</p>
         <p className="m-0 text-xl">{props.nft.name}</p>
       </div>
-
-      <img className="rounded-lg" src={props.nft.image} width={128} height={128} />
+    
+    {
+      // eslint-disable-next-line
+    } <img className="rounded-lg" src={props.nft.image} width={128} height={128} /> // eslint-disable-line
       <div className="m-4">
         <p className="m-0 font-bold text-size-xl">Description</p>
         <p className="m-0 text-xs"> {props.nft.description}</p>

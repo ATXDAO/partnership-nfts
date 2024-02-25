@@ -32,7 +32,10 @@ const Home: NextPage = () => {
 
   const { data: metadatas } = useFetches(tokenURIs);
 
-  const nfts = metadatas!.map((metadata, index) => <NftCard key={index} nft={metadata} />);
+  let nfts;
+
+  if (metadatas)
+    nfts = metadatas.map((metadata, index) => <NftCard key={index} nft={metadata} />);
 
   const { data: sixthPartnershipNftContract } = useScaffoldContract({ contractName: "SixthStreetPartnershipNft" });
   const { data: sixthMintCount } = useScaffoldContractRead({
@@ -41,15 +44,16 @@ const Home: NextPage = () => {
   });
   const { data: sixthTokenURIs } = useGetAllMetadatas(sixthPartnershipNftContract, sixthMintCount || BigInt(0));
 
-  console.log(sixthTokenURIs);
-
   for (let i = 0; i < sixthTokenURIs.length; i++) {
     if (sixthTokenURIs[i]) sixthTokenURIs[i] = sixthTokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
   }
 
   const { data: sixthMetadatas } = useFetches(sixthTokenURIs);
 
-  const sixthNfts = sixthMetadatas!.map((metadata, index) => <NftCard key={index} nft={metadata} />);
+
+  let sixthNfts;
+  if (sixthMetadatas)
+  sixthNfts = sixthMetadatas.map((metadata, index) => <NftCard key={index} nft={metadata} />);
 
   // async function onFormSubmit(event: any) {
   //   event.preventDefault()

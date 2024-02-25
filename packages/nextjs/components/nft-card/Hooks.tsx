@@ -14,7 +14,8 @@ export function useGetAllMetadatas(contract: any, mintCount: bigint) {
       setData([...arr]);
     }
     get();
-  }, [contract?.address, mintCount]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, [contract?.address, mintCount]);
 
   return { data };
 }
