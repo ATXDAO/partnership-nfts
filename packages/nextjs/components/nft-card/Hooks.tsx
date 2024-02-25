@@ -7,7 +7,7 @@ export function useGetAllMetadatas(contract: any, mintCount: bigint) {
     async function get() {
       const arr = [];
       for (let i = 0; i < mintCount; i++) {
-        let result = await contract?.read.tokenURI([i]);
+        const result = await contract?.read.tokenURI([i]);
         arr.push(result);
       }
 
