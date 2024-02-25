@@ -1,19 +1,19 @@
 "use client";
 
-import Link from "next/link";
+// import Link from "next/link";
 import type { NextPage } from "next";
-import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+// import { BugAntIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 import { NftCard } from "~~/components/nft-card/nftCard";
-import { useScaffoldContract, useScaffoldContractRead, useScaffoldContractWrite } from "~~/hooks/scaffold-eth";
-import { useAccount } from "wagmi";
-import { FormEvent } from 'react'
+import { useScaffoldContract, useScaffoldContractRead } from "~~/hooks/scaffold-eth";
+// import { useAccount } from "wagmi";
+// import { FormEvent } from 'react'
 import { useFetches, useGetAllMetadatas } from "~~/components/nft-card/Hooks";
-import rainey from "~~/components/assets/rainey.jpg"
-import houses from "~~/components/assets/houses.jpeg"
-import brick from "~~/components/assets/brick.jpeg"
+// import rainey from "~~/components/assets/rainey.jpg"
+// import houses from "~~/components/assets/houses.jpeg"
+// import brick from "~~/components/assets/brick.jpeg"
 
 const Home: NextPage = () => {
-  const account = useAccount();
+  // const account = useAccount();
 
   
   // const { data: adminRole } = useScaffoldContractRead({contractName:"RaineyStreetPartnershipNft", functionName: "DEFAULT_ADMIN_ROLE"});
@@ -24,6 +24,7 @@ const Home: NextPage = () => {
   const { data: tokenURIs } = useGetAllMetadatas(partnershipNftContract, mintCount || BigInt(0));
 
   for (let i = 0; i < tokenURIs.length; i++) {
+    if (tokenURIs[i])
     tokenURIs[i] = tokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
   }
 
@@ -40,6 +41,7 @@ const Home: NextPage = () => {
   console.log(sixthTokenURIs);
   
   for (let i = 0; i < sixthTokenURIs.length; i++) {
+    if (sixthTokenURIs[i])
     sixthTokenURIs[i] = sixthTokenURIs[i].replace("ipfs://", "https://ipfs.io/ipfs/");
   }
 
@@ -83,7 +85,7 @@ const Home: NextPage = () => {
 
         <div className={`bg-[url('../components/assets/houses.jpeg')] m-20 flex flex-col justify-center items-center`}>
           <p className="text-4xl m-2 text-center bg-slate-800 p-1 max-w-xs">Rainey Street</p>
-          <div className="grid grid-cols-3 content-center z-50">
+          <div className="grid grid-cols-3 content-center">
             {
               nfts
             }
@@ -91,7 +93,7 @@ const Home: NextPage = () => {
         </div>
         <div className={`bg-[url('../components/assets/brick.jpeg')] m-20 flex flex-col justify-center items-center`}>
           <p className="text-4xl m-2 text-center bg-slate-800 p-1 max-w-xs">6th Street</p>
-          <div className="grid grid-cols-3 content-center z-50">
+          <div className="grid grid-cols-3 content-center">
             {
               sixthNfts
             }

@@ -10,7 +10,7 @@ import "./DeployHelpers.s.sol";
 contract DeployScript is ScaffoldETHDeploy {
     error InvalidPrivateKey(string);
 
-    address admin = 0x62286D694F89a1B12c0214bfcD567bb6c2951491;
+    address admin = 0x3bEc6a181d6Ef7239F699DAf2fAa5FE3A5f01Edf;
 
     function run() external {
         uint256 deployerPrivateKey = setupLocalhostEnv();
