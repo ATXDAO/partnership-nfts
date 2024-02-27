@@ -13,9 +13,12 @@ abstract contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
     string mintUri;
     uint256 mintCount;
 
+    bool s_isTradeable;
+
     constructor(
         address[] memory admins,
         string memory newMintUri,
+        bool isTradeable,
         string memory name,
         string memory symbol
     ) ERC721(name, symbol) {
@@ -24,6 +27,7 @@ abstract contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
         }
 
         mintUri = newMintUri;
+        s_isTradeable = isTradeable;
     }
 
     function _checkAuthorized(
@@ -32,7 +36,7 @@ abstract contract ATXDAOPartnershipNft is ERC721URIStorage, AccessControl {
         uint256 tokenId
     ) internal view override {
         if (!hasRole(DEFAULT_ADMIN_ROLE, spender)) {
-            super._checkAuthorized(owner, spender, tokenId);
+            if (s_isTradeable) super._checkAuthorized(owner, spender, tokenId);
         }
     }
 
